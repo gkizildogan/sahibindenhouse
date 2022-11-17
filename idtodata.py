@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
@@ -8,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 import numpy as np
 from time import sleep
+import os
 
 ids = pd.read_csv("ids.csv", header=None, names=["ids"])
 ids = ids.drop_duplicates()
@@ -33,5 +33,10 @@ bilgiler.append("İlan Fiyatı")
 degerler = [deger.text for deger in ilan_degerleri]
 degerler.append(fiyat)
 ilan = pd.DataFrame(data=np.array(degerler).reshape(1, -1), columns=bilgiler)
-ilan.to_csv("ilanlar.csv", mode="a", index=False, header=True)
+
+if os.path.isfile("ilanlar.csv"):
+    ilan.to_csv("ilanlar.csv", mode="a", index=False, header=False)
+else:
+    ilan.to_csv("ilanlar.csv", mode="a", index=False, header=True)
+
 driver.quit()
