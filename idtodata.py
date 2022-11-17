@@ -12,4 +12,15 @@ from time import sleep
 ids = pd.read_csv("ids.csv", header=None, names=["ids"])
 ids = ids.drop_duplicates()
 ids = ids["ids"]
-ad_id = ids[0]
+ad_id = str(ids[0])
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--incognito")
+
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+driver.get("https://www.sahibinden.com/")
+WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH,"//input[@id='searchText']"))).send_keys(ad_id)
+WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH,"//button[@value='Ara']"))).click()
+page_source = driver.page_source
+soup = BeautifulSoup(page_source, features="lxml")
+driver.close()
